@@ -26,7 +26,7 @@ class indv_tourney{
   vector <wrestler *> competitors;
 
   // Bracket management
-  string show_bracket();
+  string show_bracket(bool);
   void bracket_setup();
   void bracket_sim(bool);
   void bracket_navigate();
@@ -46,11 +46,13 @@ class indv_tourney{
 
   
   // Return a bracket line based on  of matches[int index]->winner, if bool, is a double digits bracket line
-  string abbreviate(int, bool);
+  string abbreviate(int, bool,bool);
 
   // pull the winner of a match_sim
 
-  wrestler * victor(match_sim *);
+  wrestler * victor(match_sim *, bool);
+
+  string finalist(wrestler *);
   
   // all matches being simulated (8 of rd 1), (4 of rd 2), (2 of rd 3), (1 of champ)
   match_sim *a_sixteen;

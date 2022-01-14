@@ -5,6 +5,7 @@ tourney::tourney(){
 }
 
 void tourney::bracket_navigate(){
+  cout << "\033[2J\033[1;1H";
   cout << show_bracket() << endl;
   int resp = 0;
   string selection = "";
@@ -44,10 +45,13 @@ void tourney::bracket_navigate(){
 	  ch = "(7)----" + champ->winner->abbrv + "----- ";
 	  break;     
 	}
+	cout << "\033[2J\033[1;1H";
 	cout << show_bracket() << endl;
 	continue;
       }
+      cout << "\033[2J\033[1;1H";
       cout << "The tournament has completed!" << endl;
+      cout << show_bracket() << endl;
       continue;
 
     }
@@ -269,7 +273,6 @@ void tourney::random_teams(bool eight){
       i--;
     }
     delete randomizer;
-
   }
 }
 

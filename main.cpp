@@ -1,6 +1,16 @@
 #include "tourney.h"
 #include "indv_tourney.h"
 #include "meet.h"
+#include <stdio.h>
+
+#define RED   "\x1B[31m"
+#define GRN   "\x1B[32m"
+#define YEL   "\x1B[33m"
+#define BLU   "\x1B[34m"
+#define MAG   "\x1B[35m"
+#define CYN   "\x1B[36m"
+#define WHT   "\x1B[37m"
+#define RESET "\x1B[0m"
 
 
 
@@ -47,12 +57,17 @@ string meet_option[] = {
   "Quit",
   "Show Teams",
   "Launch Meet/View Brackets",
+  "Show Team Scores"
 };
 
 int const n_indv_choice = 3;
 int const n_main_choice = 7;
 int const n_choice = 9;
-int const meet_choice = 3;
+int const meet_choice = 4;
+
+void clrstrm(){
+  cout << "\033[2J\033[1;1H";
+}
 
 int main() {
   int command;
@@ -63,10 +78,12 @@ int main() {
     command = main_menu(main_option, n_main_choice);
     switch (command) {
     case 2:{
+      clrstrm();
       cout << "Hi, this is my game!" << endl;
       break;
     }
     case 3:{
+      clrstrm();
       bool duals = true;
       tourney * tournament = new tourney();
   
@@ -76,8 +93,9 @@ int main() {
 
     
 	case 2:{
+	  clrstrm();
 	  if (tournament->teams.size()>= 8) break;
-	  cout << "These are the selected teams " << endl;
+	  cout << "These are the selected teams \n" << endl;
 	  tournament->teams.push_back(new team("Western Albemarle High School"));
 
 	  tournament->teams.push_back(new team("Cave Springs High School"));
@@ -99,11 +117,13 @@ int main() {
 	}
 
 	case 3:{
+	  clrstrm();
 	  tournament->random_teams(true);
 	  tournament->view_teams();
 	  break;
 	}
 	case 4: {
+	  clrstrm();
 	  string fullname;
 	  int rating = 0;
 	  while (tournament->teams.size() <= 7){
@@ -125,33 +145,35 @@ int main() {
 	}
     
 	case 5:{
-	  if (tournament->teams.size() == 0) break;
+	  if (tournament->teams.size() == 0) {
+	    clrstrm();
+	    cout << "No Teams Selected" << endl;
+	    break;
+	  }
 	  int team = 0;
-	  cout << endl;
-	  tournament->view_teams();
       
-	  cout << endl;
+
 	  while (true){
-	
+	    clrstrm();
+	    cout << endl;
+	    tournament->view_teams();
+	    cout << endl;
 
 	    cout << "\nPress 1-8 to view the desired team, or 0 to return to the main menu \n"<< endl;
 	    cin >> team;
-	    if (team == 0) break;
-
-	    else if (team < 9 && team > 0){
-
-	      cout << tournament->teams[team-1]->info() << endl;
-	    }
-	    else {
+	    if (team == 0) {
+	      clrstrm();
 	      break;
 	    }
 
-
 	    string weight = "";
 	    while (true){
-	      cout << "Enter the weight class to the wrestler's ratings, or 0 to return to the roster\n" << endl;
+	      cout << tournament->teams[team-1]->info() << endl;
+	      cout << "Enter the weight class to the wrestler's ratings, or 0 to the team menu\n" << endl;
 	      cin >> weight;
 	      if (weight == "0"){
+		clrstrm();
+		
 		cout << endl;
 		tournament->view_teams();
 		break;
@@ -159,6 +181,7 @@ int main() {
 	      string weights[] = {"125","133","141","149","157","165","174","184","197","HWT"};
 
 	      for (int i = 0; i < 10; i++){
+		clrstrm();
 		if (weights[i] == weight){
 		  cout << endl;
 		  tournament->teams[team-1]->lineup[i]->print();
@@ -171,9 +194,11 @@ int main() {
 	  break;
 	}
 	case 6:{
+	  clrstrm();
 	  delete tournament;
 	  tournament = new tourney();
 	  tournament->set_up();
+	  cout << "Teams Cleared"<< endl;
 	  break;
 	}
 
@@ -181,11 +206,13 @@ int main() {
       
 	case 7:
 	  if (tournament->teams.size() == 0 || tournament->champ == NULL ){
+	    clrstrm();
 	    cout << "Need to have a first tournament to determine a champion"<< endl;
 	    break;
 	
 	  }
 	  else{
+	    clrstrm();
 	    if (tournament->prev_champ != NULL)  tournament->prev_champ = NULL;
 	  
 	
@@ -228,6 +255,7 @@ int main() {
 	  cout << "Are you sure you want to launch a new tournament? This will erase any previous progress any ongoing tournament (y/n)" << endl;
 	  cin >> response;
 	  if (response[0] == 'y'){
+	    clrstrm();
 	    tournament->bracket_sim(false);
 	    break;
 	  }
@@ -248,6 +276,7 @@ int main() {
 	  if (response[0] == 'y' || response[0] == 'Y') {
 	    delete tournament;
 	    duals = false;
+	    clrstrm();
 	    break;
 	  }
       
@@ -275,7 +304,7 @@ int main() {
 	  cin >> response;
 	  itourn= new indv_tourney(response);
 	  itourn->bracket_navigate();
-	  cout << itourn->show_bracket()<< endl;
+	  cout << itourn->show_bracket(true)<< endl;
 	  delete itourn;
 	  itourn = NULL;
 	  break;
@@ -301,6 +330,8 @@ int main() {
       bool m = true;
       int in = 0;
       meet * ranmeet = new meet();
+      cout << RED "red\n" RESET;
+      cout << GRN "green\n" RESET << endl;
 
       while (m){
 	in = meet_menu(meet_option, meet_choice);
@@ -314,8 +345,15 @@ int main() {
 	  break;
 	case 3:
 	  ranmeet->run();
-	default:
 	  break;
+	case 4:
+	  ranmeet->tm_scores();
+	  cout << endl<< ranmeet->final_ranking()<< endl;
+	  break;
+	
+
+      default:
+	break;
 	}
 
 
@@ -331,9 +369,6 @@ int main() {
 	return 0;
       }
       break;
-    }
-    case 7:{
-      cout << "\033[2J\033[1;1H";
     }
     default: break;
     }
